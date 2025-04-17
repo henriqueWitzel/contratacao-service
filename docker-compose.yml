@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: contratacao-db
+    environment:
+      POSTGRES_DB: contratacao
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - contratacao-net
+
+  localstack:
+    image: localstack/localstack:3.2
+    container_name: localstack
+    environment:
+      - SERVICES=sqs
+      - AWS_DEFAULT_REGION=us-east-1
+    ports:
+      - "4566:4566"
+    networks:
+      - contratacao-net
+
+  contratacao-service:
+    build: .
+    container_name: contratacao-service
+    depends_on:
+      - postgres
+      - localstack
+    ports:
+      - "8080:8080"
+    networks:
+      - contratacao-net
+
+networks:
+  contratacao-net:
+    driver: bridge
