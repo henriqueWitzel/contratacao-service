@@ -1,0 +1,30 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Maven specific
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/logs/
+/*.log
+
+# Gradle specific
+/.gradle/
+/build/
+/*.gradle.kts
+
+# IntelliJ IDEA specific
+/.idea/
+/*.iml
+/out/
+
+# Spring Boot specific
+/*.jar
+/*.war
+/*.ear
+
+# OS generated files
+.DS_Store
+Thumbs.db
