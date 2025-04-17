@@ -45,7 +45,7 @@ class ContratacaoControllerTest {
         UUID fakeId = UUID.randomUUID();
         Mockito.when(useCase.executar(any())).thenReturn(fakeId);
 
-        var request = new ContratacaoRequest("12345678900","Seguro Vida",new BigDecimal("300.00"));
+        var request = new ContratacaoRequest("12345678900","Seguro Automotivo",new BigDecimal("300.00"));
 
         mockMvc.perform(post("/contratacoes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -61,7 +61,7 @@ class ContratacaoControllerTest {
         var response = new ContratacaoResponse(
                 fakeId,
                 "12345678900",
-                "Seguro Vida",
+                "Seguro Automotivo",
                 new BigDecimal("300.00"),
                 "CRIADA",
                 LocalDateTime.now()
@@ -72,7 +72,7 @@ class ContratacaoControllerTest {
         mockMvc.perform(get("/contratacoes/" + fakeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cpfCliente", is("12345678900")))
-                .andExpect(jsonPath("$.produto", is("Seguro Vida")))
+                .andExpect(jsonPath("$.produto", is("Seguro Automotivo")))
                 .andExpect(jsonPath("$.valor", is(300.00)))
                 .andExpect(jsonPath("$.status", is("CRIADA")));
     }

@@ -47,7 +47,7 @@ class ContratacaoServiceIntegrationTest {
         // Arrange
         ContratacaoRequest request = new ContratacaoRequest(
                 "12345678900",
-                "Seguro de Vida IntegrationTest",
+                "Seguro Automotivo IntegrationTest",
                 new BigDecimal("99.99")
         );
 
@@ -71,7 +71,7 @@ class ContratacaoServiceIntegrationTest {
         // Valida persistência
         Contratacao contratacao = repository.buscarPorId(uuid).orElse(null);
         assertThat(contratacao).isNotNull();
-        assertThat(contratacao.getProduto()).isEqualTo("Seguro de Vida IntegrationTest");
+        assertThat(contratacao.getProduto()).isEqualTo("Seguro Automotivo IntegrationTest");
 
         // Verifica mensagem na fila
         var sqsRequest = new ReceiveMessageRequest()
@@ -79,7 +79,7 @@ class ContratacaoServiceIntegrationTest {
                 .withMaxNumberOfMessages(10);
 
         List<com.amazonaws.services.sqs.model.Message> mensagens = amazonSQS.receiveMessage(sqsRequest).getMessages();
-        assertThat(mensagens).anyMatch(m -> m.getBody().contains("Seguro de Vida IntegrationTest"));
+        assertThat(mensagens).anyMatch(m -> m.getBody().contains("Seguro Automotivo IntegrationTest"));
 
         // Cleanup: remove do banco e limpa fila
         repository.deletar(uuid);

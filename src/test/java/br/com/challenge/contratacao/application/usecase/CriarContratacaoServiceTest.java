@@ -35,7 +35,7 @@ class CriarContratacaoServiceTest {
     @Test
     void deveCriarContratacaoComSucesso() {
         // Prepara os dados de entrada (request)
-        ContratacaoRequest request = new ContratacaoRequest("12345678900","Seguro Vida",new BigDecimal("200.00"));
+        ContratacaoRequest request = new ContratacaoRequest("12345678900","Seguro Automotivo",new BigDecimal("200.00"));
 
         // Captura o objeto salvo no repositório
         ArgumentCaptor<Contratacao> captor = ArgumentCaptor.forClass(Contratacao.class);
@@ -47,7 +47,7 @@ class CriarContratacaoServiceTest {
         verify(repository).salvar(captor.capture());
         Contratacao contratacaoSalva = captor.getValue();
         assertEquals("12345678900", contratacaoSalva.getCpfCliente());
-        assertEquals("Seguro Vida", contratacaoSalva.getProduto());
+        assertEquals("Seguro Automotivo", contratacaoSalva.getProduto());
         assertEquals(new BigDecimal("200.00"), contratacaoSalva.getValor());
 
         verify(eventoNovaVendaPort).publicar(contratacaoSalva);
@@ -57,14 +57,14 @@ class CriarContratacaoServiceTest {
     void deveBuscarContratacaoPorId() {
         // Cria uma contratação mockada
         UUID id = UUID.randomUUID();
-        Contratacao c = new Contratacao(UUID.randomUUID(), "12345678900", "Seguro Vida", new BigDecimal("200.00"), "CRIADA", LocalDateTime.now());
+        Contratacao c = new Contratacao(UUID.randomUUID(), "12345678900", "Seguro Automotivo", new BigDecimal("200.00"), "CRIADA", LocalDateTime.now());
         when(repository.buscarPorId(id)).thenReturn(Optional.of(c));
 
         var response = service.buscar(id);
 
         assertNotNull(response);
         assertEquals("12345678900", response.cpfCliente());
-        assertEquals("Seguro Vida", response.produto());
+        assertEquals("Seguro Automotivo", response.produto());
         assertEquals(new BigDecimal("200.00"), response.valor());
     }
 

@@ -15,7 +15,7 @@ public record ContratacaoResponse(
         @Schema(description = "CPF do cliente", example = "12345678900")
         String cpfCliente,
 
-        @Schema(description = "Produto contratado", example = "Seguro de Vida")
+        @Schema(description = "Produto contratado", example = "Seguro Automotivo")
         String produto,
 
         @Schema(description = "Valor da contratação", example = "150.00")

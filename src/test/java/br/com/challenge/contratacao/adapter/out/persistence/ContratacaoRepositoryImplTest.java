@@ -30,7 +30,7 @@ class ContratacaoRepositoryImplTest {
         Contratacao contratacao = new Contratacao(
                 UUID.randomUUID(),
                 "98765432100",
-                "Seguro Residencial",
+                "Seguro Automotivo",
                 new BigDecimal("200.00"),
                 "CRIADA",
                 LocalDateTime.now()
@@ -48,7 +48,7 @@ class ContratacaoRepositoryImplTest {
     @Test
     void deveRetornarContratacaoPorId() {
         UUID id = UUID.randomUUID();
-        Contratacao contratacao = new Contratacao(id, "12345678900", "Seguro Vida",
+        Contratacao contratacao = new Contratacao(id, "12345678900", "Seguro Automotivo",
                 new BigDecimal("150.00"), "CRIADA", LocalDateTime.now());
 
         when(springDataJpaRepository.findById(id)).thenReturn(Optional.of(contratacao));

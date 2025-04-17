@@ -26,7 +26,7 @@ class ContratacaoRequestValidationTest {
 
     @Test
     void deveDetectarCpfEmBranco() {
-        ContratacaoRequest dto = new ContratacaoRequest("", "Seguro Vida", BigDecimal.TEN);
+        ContratacaoRequest dto = new ContratacaoRequest("", "Seguro Automotivo", BigDecimal.TEN);
         Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
 
         assertThat(violations)
@@ -44,7 +44,7 @@ class ContratacaoRequestValidationTest {
 
     @Test
     void deveDetectarValorNegativo() {
-        ContratacaoRequest dto = new ContratacaoRequest("12345678900", "Seguro Vida", new BigDecimal("-10"));
+        ContratacaoRequest dto = new ContratacaoRequest("12345678900", "Seguro Automotivo", new BigDecimal("-10"));
         Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
 
         assertThat(violations)

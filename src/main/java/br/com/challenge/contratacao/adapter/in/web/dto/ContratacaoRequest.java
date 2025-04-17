@@ -12,7 +12,7 @@ public record ContratacaoRequest(
         @Schema(description = "CPF do cliente", example = "12345678900")
         @NotBlank String cpfCliente,
 
-        @Schema(description = "Nome do produto contratado", example = "Seguro de Vida")
+        @Schema(description = "Nome do produto contratado", example = "Seguro Automotivo")
         @NotBlank String produto,
 
         @Schema(description = "Valor da contratação", example = "150.00")

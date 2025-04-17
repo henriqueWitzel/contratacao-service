@@ -52,7 +52,7 @@ class SqsPublisherTest {
         Contratacao contratacao = new Contratacao(
                 UUID.randomUUID(),
                 "12345678900",
-                "Seguro Vida",
+                "Seguro Automotivo",
                 new BigDecimal("150.00"),
                 "CRIADA",
                 LocalDateTime.now()

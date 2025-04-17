@@ -13,9 +13,9 @@ class ContratacaoTest {
 
     @Test
     void deveCriarContratacaoComDadosValidos() {
-        Contratacao contratacao = new Contratacao(UUID.randomUUID(), "12345678900", "Seguro Vida", new BigDecimal("100.00"), "CRIADA", LocalDateTime.now());
+        Contratacao contratacao = new Contratacao(UUID.randomUUID(), "12345678900", "Seguro Automotivo", new BigDecimal("100.00"), "CRIADA", LocalDateTime.now());
         assertEquals("12345678900", contratacao.getCpfCliente());
-        assertEquals("Seguro Vida", contratacao.getProduto());
+        assertEquals("Seguro Automotivo", contratacao.getProduto());
         assertEquals(new BigDecimal("100.00"), contratacao.getValor());
     }
 }
