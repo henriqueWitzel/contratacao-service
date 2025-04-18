@@ -30,73 +30,70 @@ class SqsPublisherTest {
 
     @BeforeEach
     void setUp() {
-        // Configura o mock do cliente SQS
         amazonSQS = mock(AmazonSQS.class);
 
-        // Configura as propriedades da fila SQS
         SqsProperties properties = new SqsProperties();
         properties.setNovaVendaUrl("http://localhost:4566/000000000000/nova-venda-criada");
 
-        // Configura o ObjectMapper com suporte a Java Time (necessário para serializar LocalDateTime)
         objectMapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        // Instancia o SqsPublisher com dependências mockadas
         publisher = new SqsPublisher(amazonSQS, properties, objectMapper);
     }
 
     @Test
     void devePublicarMensagemComSucesso() {
-        // Cria uma instância fictícia de Contratacao
         Contratacao contratacao = new Contratacao(
                 UUID.randomUUID(),
                 "12345678900",
                 "Seguro Automotivo",
                 new BigDecimal("150.00"),
                 "CRIADA",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                "Hyundai HB20",
+                2021,
+                "Sudeste"
         );
 
-        // Executa o método de publicação
         publisher.publicar(contratacao);
 
-        // Verifica se o método sendMessage foi chamado com qualquer SendMessageRequest
         verify(amazonSQS, times(1)).sendMessage(any(SendMessageRequest.class));
     }
 
     @Test
     void deveLancarErroQuandoUrlNaoForConfigurada() {
-        // Configura propriedades sem URL de fila
         SqsProperties semUrl = new SqsProperties();
 
-        // Cria publisher sem URL válida
         SqsPublisher publisherComErro = new SqsPublisher(amazonSQS, semUrl, objectMapper);
 
-        // Cria contratação de teste
         Contratacao contratacao = new Contratacao(
                 UUID.randomUUID(),
                 "00000000000",
                 "Teste",
                 BigDecimal.ONE,
-                null,
-                null
+                "CRIADA",
+                LocalDateTime.now(),
+                "Celta",
+                2005,
+                "Sul"
         );
 
-        // Verifica que uma IllegalArgumentException é lançada devido à URL nula
         assertThrows(IllegalArgumentException.class, () -> publisherComErro.publicar(contratacao));
     }
 
     @Test
     void deveLancarPublicacaoEventoExceptionQuandoFalharSerializacao() throws JsonProcessingException {
-        // Arrange
         Contratacao contratacao = new Contratacao(
                 UUID.randomUUID(),
                 "12345678900",
                 "Produto Inválido",
                 BigDecimal.ONE,
                 "CRIADA",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                "Fusca",
+                1970,
+                "Centro-Oeste"
         );
 
         ObjectMapper mapperMock = mock(ObjectMapper.class);
@@ -107,9 +104,8 @@ class SqsPublisherTest {
 
         when(mapperMock.writeValueAsString(any())).thenThrow(new JsonProcessingException("Erro de mock") {});
 
-        SqsPublisher publisher = new SqsPublisher(sqsMock, props, mapperMock);
+        SqsPublisher newPublisher = new SqsPublisher(sqsMock, props, mapperMock);
 
-        // Act & Assert
-        assertThrows(PublicacaoEventoException.class, () -> publisher.publicar(contratacao));
+        assertThrows(PublicacaoEventoException.class, () -> newPublisher.publicar(contratacao));
     }
 }

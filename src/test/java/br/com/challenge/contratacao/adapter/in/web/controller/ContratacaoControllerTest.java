@@ -3,6 +3,7 @@ package br.com.challenge.contratacao.adapter.in.web.controller;
 import br.com.challenge.contratacao.adapter.in.web.dto.ContratacaoRequest;
 import br.com.challenge.contratacao.adapter.in.web.dto.ContratacaoResponse;
 import br.com.challenge.contratacao.application.port.in.CriarContratacaoUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,11 +18,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag("unit")
 @WebMvcTest(ContratacaoController.class)
@@ -45,7 +45,14 @@ class ContratacaoControllerTest {
         UUID fakeId = UUID.randomUUID();
         Mockito.when(useCase.executar(any())).thenReturn(fakeId);
 
-        var request = new ContratacaoRequest("12345678900","Seguro Automotivo",new BigDecimal("300.00"));
+        var request = new ContratacaoRequest(
+                "12345678900",
+                "Seguro Automotivo",
+                new BigDecimal("300.00"),
+                "Golf",
+                2022,
+                "Sudeste"
+        );
 
         mockMvc.perform(post("/contratacoes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +71,10 @@ class ContratacaoControllerTest {
                 "Seguro Automotivo",
                 new BigDecimal("300.00"),
                 "CRIADA",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                "Gol",
+                2022,
+                "Sudeste"
         );
 
         Mockito.when(useCase.buscar(fakeId)).thenReturn(response);
@@ -74,6 +84,9 @@ class ContratacaoControllerTest {
                 .andExpect(jsonPath("$.cpfCliente", is("12345678900")))
                 .andExpect(jsonPath("$.produto", is("Seguro Automotivo")))
                 .andExpect(jsonPath("$.valor", is(300.00)))
-                .andExpect(jsonPath("$.status", is("CRIADA")));
+                .andExpect(jsonPath("$.status", is("CRIADA")))
+                .andExpect(jsonPath("$.modeloVeiculo", is("Gol")))
+                .andExpect(jsonPath("$.anoFabricacao", is(2022)))
+                .andExpect(jsonPath("$.regiaoContratacao", is("Sudeste")));
     }
 }

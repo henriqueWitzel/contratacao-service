@@ -24,30 +24,116 @@ class ContratacaoRequestValidationTest {
         validator = factory.getValidator();
     }
 
+    private ContratacaoRequest criarRequestValido() {
+        return new ContratacaoRequest(
+                "12345678900",
+                "Seguro Automotivo",
+                BigDecimal.TEN,
+                "Hyundai HB20",
+                2021,
+                "Sudeste"
+        );
+    }
+
     @Test
     void deveDetectarCpfEmBranco() {
-        ContratacaoRequest dto = new ContratacaoRequest("", "Seguro Automotivo", BigDecimal.TEN);
-        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
+        var dto = criarRequestValido();
+        dto = new ContratacaoRequest(
+                "",
+                dto.produto(),
+                dto.valor(),
+                dto.modeloVeiculo(),
+                dto.anoFabricacao(),
+                dto.regiaoContratacao()
+        );
 
+        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
         assertThat(violations)
                 .anyMatch(v -> v.getPropertyPath().toString().equals("cpfCliente"));
     }
 
     @Test
     void deveDetectarProdutoNulo() {
-        ContratacaoRequest dto = new ContratacaoRequest("12345678900", null, BigDecimal.TEN);
-        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
+        var dto = criarRequestValido();
+        dto = new ContratacaoRequest(
+                dto.cpfCliente(),
+                null,
+                dto.valor(),
+                dto.modeloVeiculo(),
+                dto.anoFabricacao(),
+                dto.regiaoContratacao()
+        );
 
+        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
         assertThat(violations)
                 .anyMatch(v -> v.getPropertyPath().toString().equals("produto"));
     }
 
     @Test
     void deveDetectarValorNegativo() {
-        ContratacaoRequest dto = new ContratacaoRequest("12345678900", "Seguro Automotivo", new BigDecimal("-10"));
-        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
+        var dto = criarRequestValido();
+        dto = new ContratacaoRequest(
+                dto.cpfCliente(),
+                dto.produto(),
+                new BigDecimal("-10"),
+                dto.modeloVeiculo(),
+                dto.anoFabricacao(),
+                dto.regiaoContratacao()
+        );
 
+        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
         assertThat(violations)
                 .anyMatch(v -> v.getPropertyPath().toString().equals("valor"));
+    }
+
+    @Test
+    void deveDetectarModeloVeiculoEmBranco() {
+        var dto = criarRequestValido();
+        dto = new ContratacaoRequest(
+                dto.cpfCliente(),
+                dto.produto(),
+                dto.valor(),
+                "",
+                dto.anoFabricacao(),
+                dto.regiaoContratacao()
+        );
+
+        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
+        assertThat(violations)
+                .anyMatch(v -> v.getPropertyPath().toString().equals("modeloVeiculo"));
+    }
+
+    @Test
+    void deveDetectarAnoFabricacaoInvalido() {
+        var dto = criarRequestValido();
+        dto = new ContratacaoRequest(
+                dto.cpfCliente(),
+                dto.produto(),
+                dto.valor(),
+                dto.modeloVeiculo(),
+                1800,
+                dto.regiaoContratacao()
+        );
+
+        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
+        assertThat(violations)
+                .anyMatch(v -> v.getPropertyPath().toString().equals("anoFabricacao"));
+    }
+
+    @Test
+    void deveDetectarRegiaoEmBranco() {
+        var dto = criarRequestValido();
+        dto = new ContratacaoRequest(
+                dto.cpfCliente(),
+                dto.produto(),
+                dto.valor(),
+                dto.modeloVeiculo(),
+                dto.anoFabricacao(),
+                ""
+        );
+
+        Set<ConstraintViolation<ContratacaoRequest>> violations = validator.validate(dto);
+        assertThat(violations)
+                .anyMatch(v -> v.getPropertyPath().toString().equals("regiaoContratacao"));
     }
 }

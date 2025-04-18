@@ -17,19 +17,20 @@ class HealthEndpointIntegrationTest {
     private int port;
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private static final String HEALTH_STATUS_EXPECTED = "\"status\":\"UP\"";
 
     @Test
     void deveRetornarStatusUpParaHealthCheck() {
-        // Monta a URL para o endpoint de health
         String url = "http://localhost:" + port + "/actuator/health";
 
-        // Faz a requisição GET
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
-        // Verifica se a resposta foi bem-sucedida (2xx)
-        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+        assertThat(response.getStatusCode().is2xxSuccessful())
+                .as("Deveria retornar status HTTP 2xx")
+                .isTrue();
 
-        // Verifica se o corpo contém o status "UP"
-        assertThat(response.getBody()).contains("\"status\":\"UP\"");
+        assertThat(response.getBody())
+                .as("Corpo da resposta deveria conter status UP")
+                .contains(HEALTH_STATUS_EXPECTED);
     }
 }

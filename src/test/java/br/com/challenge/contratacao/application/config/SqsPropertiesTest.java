@@ -8,9 +8,14 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Embora utilize @SpringBootTest para carregar o contexto,
+ * este teste é leve e visa garantir a configuração correta das propriedades SQS.
+ * A anotação @Tag("unit") é mantida para que este teste seja considerado na cobertura unitária.
+ */
 @Tag("unit")
 @SpringBootTest
-@ActiveProfiles("test") // lê do application-test.yml
+@ActiveProfiles("test")
 class SqsPropertiesTest {
 
     @Autowired

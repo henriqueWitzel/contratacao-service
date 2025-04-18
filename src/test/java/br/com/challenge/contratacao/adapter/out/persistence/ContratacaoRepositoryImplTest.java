@@ -33,7 +33,10 @@ class ContratacaoRepositoryImplTest {
                 "Seguro Automotivo",
                 new BigDecimal("200.00"),
                 "CRIADA",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                "Civic",
+                2022,
+                "Sul"
         );
 
         when(springDataJpaRepository.save(contratacao)).thenReturn(contratacao);
@@ -42,14 +45,25 @@ class ContratacaoRepositoryImplTest {
 
         assertThat(resultado).isNotNull();
         assertThat(resultado.getCpfCliente()).isEqualTo("98765432100");
+        assertThat(resultado.getModeloVeiculo()).isEqualTo("Civic");
+        assertThat(resultado.getRegiaoContratacao()).isEqualTo("Sul");
         verify(springDataJpaRepository, times(1)).save(contratacao);
     }
 
     @Test
     void deveRetornarContratacaoPorId() {
         UUID id = UUID.randomUUID();
-        Contratacao contratacao = new Contratacao(id, "12345678900", "Seguro Automotivo",
-                new BigDecimal("150.00"), "CRIADA", LocalDateTime.now());
+        Contratacao contratacao = new Contratacao(
+                id,
+                "12345678900",
+                "Seguro Automotivo",
+                new BigDecimal("150.00"),
+                "CRIADA",
+                LocalDateTime.now(),
+                "Onix",
+                2020,
+                "Sudeste"
+        );
 
         when(springDataJpaRepository.findById(id)).thenReturn(Optional.of(contratacao));
 
@@ -57,6 +71,7 @@ class ContratacaoRepositoryImplTest {
 
         assertThat(resultado).isPresent();
         assertThat(resultado.get().getId()).isEqualTo(id);
+        assertThat(resultado.get().getModeloVeiculo()).isEqualTo("Onix");
         verify(springDataJpaRepository, times(1)).findById(id);
     }
 
@@ -68,5 +83,4 @@ class ContratacaoRepositoryImplTest {
 
         verify(springDataJpaRepository, times(1)).deleteById(id);
     }
-
 }

@@ -2,10 +2,12 @@ package br.com.challenge.contratacao.application.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import org.junit.jupiter.api.Tag;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Tag("unit")
 @Configuration
 public class SwaggerConfig {
 

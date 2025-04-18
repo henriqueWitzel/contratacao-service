@@ -1,6 +1,7 @@
 package br.com.challenge.contratacao.application.usecase;
 
 import br.com.challenge.contratacao.adapter.in.web.dto.ContratacaoRequest;
+import br.com.challenge.contratacao.application.exception.RecursoNaoEncontradoException;
 import br.com.challenge.contratacao.application.port.out.ContratacaoRepositoryPort;
 import br.com.challenge.contratacao.application.port.out.EventoNovaVendaPort;
 import br.com.challenge.contratacao.domain.entity.Contratacao;
@@ -26,7 +27,6 @@ class CriarContratacaoServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Mocka as dependências necessárias para a service
         repository = mock(ContratacaoRepositoryPort.class);
         eventoNovaVendaPort = mock(EventoNovaVendaPort.class);
         service = new CriarContratacaoService(repository, eventoNovaVendaPort);
@@ -34,10 +34,15 @@ class CriarContratacaoServiceTest {
 
     @Test
     void deveCriarContratacaoComSucesso() {
-        // Prepara os dados de entrada (request)
-        ContratacaoRequest request = new ContratacaoRequest("12345678900","Seguro Automotivo",new BigDecimal("200.00"));
+        ContratacaoRequest request = new ContratacaoRequest(
+                "12345678900",
+                "Seguro Automotivo",
+                new BigDecimal("200.00"),
+                "Hyundai HB20",
+                2021,
+                "Sudeste"
+        );
 
-        // Captura o objeto salvo no repositório
         ArgumentCaptor<Contratacao> captor = ArgumentCaptor.forClass(Contratacao.class);
         when(repository.salvar(any())).thenAnswer(i -> i.getArguments()[0]);
 
@@ -45,19 +50,33 @@ class CriarContratacaoServiceTest {
 
         assertNotNull(id);
         verify(repository).salvar(captor.capture());
+
         Contratacao contratacaoSalva = captor.getValue();
         assertEquals("12345678900", contratacaoSalva.getCpfCliente());
         assertEquals("Seguro Automotivo", contratacaoSalva.getProduto());
         assertEquals(new BigDecimal("200.00"), contratacaoSalva.getValor());
+        assertEquals("Hyundai HB20", contratacaoSalva.getModeloVeiculo());
+        assertEquals(2021, contratacaoSalva.getAnoFabricacao());
+        assertEquals("Sudeste", contratacaoSalva.getRegiaoContratacao());
 
         verify(eventoNovaVendaPort).publicar(contratacaoSalva);
     }
 
     @Test
     void deveBuscarContratacaoPorId() {
-        // Cria uma contratação mockada
         UUID id = UUID.randomUUID();
-        Contratacao c = new Contratacao(UUID.randomUUID(), "12345678900", "Seguro Automotivo", new BigDecimal("200.00"), "CRIADA", LocalDateTime.now());
+        Contratacao c = new Contratacao(
+                id,
+                "12345678900",
+                "Seguro Automotivo",
+                new BigDecimal("200.00"),
+                "CRIADA",
+                LocalDateTime.now(),
+                "Hyundai HB20",
+                2021,
+                "Sudeste"
+        );
+
         when(repository.buscarPorId(id)).thenReturn(Optional.of(c));
 
         var response = service.buscar(id);
@@ -66,6 +85,9 @@ class CriarContratacaoServiceTest {
         assertEquals("12345678900", response.cpfCliente());
         assertEquals("Seguro Automotivo", response.produto());
         assertEquals(new BigDecimal("200.00"), response.valor());
+        assertEquals("Hyundai HB20", response.modeloVeiculo());
+        assertEquals(2021, response.anoFabricacao());
+        assertEquals("Sudeste", response.regiaoContratacao());
     }
 
     @Test
@@ -73,9 +95,6 @@ class CriarContratacaoServiceTest {
         UUID id = UUID.randomUUID();
         when(repository.buscarPorId(id)).thenReturn(Optional.empty());
 
-        // Garante que uma exceção de Runtime é lançada caso não encontre
-        assertThrows(RuntimeException.class, () -> service.buscar(id));
+        assertThrows(RecursoNaoEncontradoException.class, () -> service.buscar(id));
     }
 }
-
-

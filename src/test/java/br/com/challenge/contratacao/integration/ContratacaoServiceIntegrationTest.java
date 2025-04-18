@@ -44,11 +44,13 @@ class ContratacaoServiceIntegrationTest {
     @Test
     @Order(1)
     void deveCriarContratacaoComSucesso() {
-        // Arrange
         ContratacaoRequest request = new ContratacaoRequest(
                 "12345678900",
                 "Seguro Automotivo IntegrationTest",
-                new BigDecimal("99.99")
+                new BigDecimal("99.99"),
+                "Hyundai HB20",
+                2021,
+                "Sudeste"
         );
 
         HttpHeaders headers = new HttpHeaders();
@@ -57,10 +59,8 @@ class ContratacaoServiceIntegrationTest {
         HttpEntity<ContratacaoRequest> httpEntity = new HttpEntity<>(request, headers);
         URI uri = URI.create("http://localhost:" + port + "/contratacoes");
 
-        // Act
         ResponseEntity<Void> response = restTemplate.postForEntity(uri, httpEntity, Void.class);
 
-        // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         // Extrai ID retornado
@@ -89,11 +89,13 @@ class ContratacaoServiceIntegrationTest {
     @Test
     @Order(2)
     void deveFalharComCpfEmBranco() {
-        // Arrange
         ContratacaoRequest request = new ContratacaoRequest(
                 "", // CPF inválido
                 "Seguro Auto",
-                new BigDecimal("200.00")
+                new BigDecimal("200.00"),
+                "Hyundai HB20",
+                2021,
+                "Sudeste"
         );
 
         HttpHeaders headers = new HttpHeaders();
@@ -101,17 +103,12 @@ class ContratacaoServiceIntegrationTest {
         HttpEntity<ContratacaoRequest> httpEntity = new HttpEntity<>(request, headers);
         URI uri = URI.create("http://localhost:" + port + "/contratacoes");
 
-        // Act & Assert
         try {
             restTemplate.postForEntity(uri, httpEntity, String.class);
             fail("Era esperado erro 400 para CPF em branco.");
         } catch (org.springframework.web.client.HttpClientErrorException.BadRequest ex) {
             assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
-            // Apenas para log visual no console (removível depois)
             System.out.println(">> Resposta de erro: \n" + ex.getResponseBodyAsString());
         }
     }
-
-
 }
