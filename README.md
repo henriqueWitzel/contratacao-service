@@ -103,7 +103,7 @@ AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws sqs create-queue \
 ```
 
 ## 🧪 Testes
-> A cobertura total supera 90%, validando cenários positivos e negativos de forma automatizada.
+> A cobertura total supera 95%, validando cenários positivos e negativos de forma automatizada.
 
 - Testes unitários e de integração separados por perfil Maven:
   - `unit-tests` (ativo por padrão)
@@ -184,7 +184,7 @@ Este projeto também demonstra domínio e aplicação prática de:
 ## 👤 Autor
 
 **Henrique Witzel**  
-Desenvolvedor backend e líder técnico com foco em:
+Desenvolvedor backend e tech lead com foco em:
 
 - Arquitetura moderna
 - Qualidade de código
