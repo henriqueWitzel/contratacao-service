@@ -28,7 +28,8 @@ public class CriarContratacaoService implements CriarContratacaoUseCase {
 
         Contratacao nova = new Contratacao(request);
         repository.salvar(nova);
-        log.info("Contratação persistida com ID: {}", nova.getId());
+        log.info("Contratação persistida com ID: {}, Produto: {}, Região: {}",
+                nova.getId(), nova.getProduto(), nova.getRegiaoContratacao());
 
         publisher.publicar(nova);
         log.info("Evento de nova venda publicado para ID: {}", nova.getId());
@@ -43,6 +44,7 @@ public class CriarContratacaoService implements CriarContratacaoUseCase {
         return repository.buscarPorId(id)
                 .map(contratacao -> {
                     log.info("Contratação encontrada para ID: {}", id);
+                    log.debug("Dados da contratação: {}", contratacao);
                     return new ContratacaoResponse(contratacao);
                 })
                 .orElseThrow(() -> {

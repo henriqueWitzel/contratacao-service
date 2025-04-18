@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Schema(description = "Dados retornados de uma contratação existente")
 public record ContratacaoResponse(
+
         @Schema(description = "Identificador da contratação", example = "d290f1ee-6c54-4b01-90e6-d701748f0851")
         UUID id,
 
@@ -25,7 +26,17 @@ public record ContratacaoResponse(
         String status,
 
         @Schema(description = "Data de criação do registro", example = "2025-04-16T22:00:00")
-        LocalDateTime dataCriacao
+        LocalDateTime dataCriacao,
+
+        @Schema(description = "Modelo do veículo", example = "Hyundai HB20")
+        String modeloVeiculo,
+
+        @Schema(description = "Ano de fabricação do veículo", example = "2021")
+        int anoFabricacao,
+
+        @Schema(description = "Região do país onde foi realizada a contratação", example = "Sudeste")
+        String regiaoContratacao
+
 ) {
     public ContratacaoResponse(Contratacao contratacao) {
         this(
@@ -34,7 +45,10 @@ public record ContratacaoResponse(
                 contratacao.getProduto(),
                 contratacao.getValor(),
                 contratacao.getStatus(),
-                contratacao.getDataCriacao()
+                contratacao.getDataCriacao(),
+                contratacao.getModeloVeiculo(),
+                contratacao.getAnoFabricacao(),
+                contratacao.getRegiaoContratacao()
         );
     }
 }

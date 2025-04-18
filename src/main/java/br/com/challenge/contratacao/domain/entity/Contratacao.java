@@ -22,6 +22,9 @@ public class Contratacao {
     private BigDecimal valor;
     private String status;
     private LocalDateTime dataCriacao;
+    private String modeloVeiculo;
+    private int anoFabricacao;
+    private String regiaoContratacao;
 
     public Contratacao(ContratacaoRequest request) {
         this.id = UUID.randomUUID();
@@ -30,5 +33,8 @@ public class Contratacao {
         this.valor = request.valor();
         this.status = "CRIADA";
         this.dataCriacao = LocalDateTime.now();
+        this.modeloVeiculo = request.modeloVeiculo();
+        this.anoFabricacao = request.anoFabricacao();
+        this.regiaoContratacao = request.regiaoContratacao();
     }
 }
