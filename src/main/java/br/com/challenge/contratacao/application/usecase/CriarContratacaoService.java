@@ -8,10 +8,12 @@ import br.com.challenge.contratacao.application.port.out.ContratacaoRepositoryPo
 import br.com.challenge.contratacao.application.port.out.EventoNovaVendaPort;
 import br.com.challenge.contratacao.domain.entity.Contratacao;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CriarContratacaoService implements CriarContratacaoUseCase {
@@ -21,16 +23,31 @@ public class CriarContratacaoService implements CriarContratacaoUseCase {
 
     @Override
     public UUID executar(ContratacaoRequest request) {
+        log.info("Iniciando criação de nova contratação para CPF: {}", request.cpfCliente());
+        log.debug("Payload recebido: {}", request);
+
         Contratacao nova = new Contratacao(request);
         repository.salvar(nova);
+        log.info("Contratação persistida com ID: {}", nova.getId());
+
         publisher.publicar(nova);
+        log.info("Evento de nova venda publicado para ID: {}", nova.getId());
+
         return nova.getId();
     }
 
     @Override
     public ContratacaoResponse buscar(UUID id) {
+        log.info("Buscando contratação com ID: {}", id);
+
         return repository.buscarPorId(id)
-                .map(ContratacaoResponse::new)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Contratação não encontrada"));
+                .map(contratacao -> {
+                    log.info("Contratação encontrada para ID: {}", id);
+                    return new ContratacaoResponse(contratacao);
+                })
+                .orElseThrow(() -> {
+                    log.warn("Contratação não encontrada para ID: {}", id);
+                    return new RecursoNaoEncontradoException("Contratação não encontrada");
+                });
     }
 }

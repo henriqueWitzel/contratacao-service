@@ -9,12 +9,14 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
  * Publicador de eventos para a fila do SQS.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SqsPublisher implements EventoNovaVendaPort {
@@ -29,8 +31,13 @@ public class SqsPublisher implements EventoNovaVendaPort {
 
         try {
             String mensagem = objectMapper.writeValueAsString(contratacao);
+            log.debug("Mensagem serializada para envio ao SQS: {}", mensagem);
+
             amazonSQS.sendMessage(new SendMessageRequest(properties.getNovaVendaUrl(), mensagem));
+            log.info("Mensagem enviada para fila SQS com sucesso. ID Contratação: {}", contratacao.getId());
+
         } catch (JsonProcessingException e) {
+            log.error("Erro ao serializar a mensagem para o SQS. Contratação ID: {}", contratacao.getId(), e);
             throw new PublicacaoEventoException("Erro ao serializar a mensagem para o SQS", e);
         }
     }

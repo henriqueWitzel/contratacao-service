@@ -10,12 +10,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/contratacoes")
 @RequiredArgsConstructor
@@ -33,7 +35,11 @@ public class ContratacaoController {
     })
     @PostMapping
     public ResponseEntity<Void> contratar(@RequestBody @Valid ContratacaoRequest request) {
+        log.info("Recebida requisição de contratação para CPF: {}", request.cpfCliente());
+
         UUID id = criarContratacaoUseCase.executar(request);
+
+        log.info("Contratação criada com sucesso. ID: {}", id);
         return ResponseEntity.created(URI.create("/contratacoes/" + id)).build();
     }
 
@@ -48,6 +54,11 @@ public class ContratacaoController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ContratacaoResponse> buscar(@PathVariable UUID id) {
-        return ResponseEntity.ok(criarContratacaoUseCase.buscar(id));
+        log.info("Recebida requisição para buscar contratação com ID: {}", id);
+
+        ContratacaoResponse response = criarContratacaoUseCase.buscar(id);
+
+        log.debug("Contratação encontrada: {}", response);
+        return ResponseEntity.ok(response);
     }
 }
